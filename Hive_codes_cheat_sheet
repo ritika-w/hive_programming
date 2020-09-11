@@ -1,0 +1,25 @@
+-- Hive namespaces: 
+-- hivevar: user-defined custom variables
+-- hiveconf: hive-specific configuration properties
+-- system: Configuration properties defined by Java
+-- env: Environment variables defined by the shell environment
+
+-- Hivevar & Hiveconf are used in different contexts but they function the same way in most cases.
+-- Hive variables are internally stored as Java Strings. Hive replaces the reference with the variable's value before sending the query to query processor.
+
+-- Variables are displayed & changed using SET command.
+	  Set -v; --prints all variables in the namespace
+
+-- Setting New variables in Hive
+	  Set <variable_name> = <variable_value>; -- option1
+	  Set hivevar:<variable_name>=<variable_value>; --option2
+	
+-- Displaying variables in hive
+	  Set <variable_name>;
+
+-- Accessing variable values stored
+	  If variable is set using --set hivevar:<variable_name>=<variable_value>; 
+		then select ${<variable_name>};
+		
+	  If variable is set using --set <variable_name> = <variable_value>; 
+		then select ${hiveconf:<variable_name>};
