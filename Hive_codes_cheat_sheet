@@ -7,6 +7,7 @@
 -- Hivevar & Hiveconf are used in different contexts but they function the same way in most cases.
 -- Hive variables are internally stored as Java Strings. Hive replaces the reference with the variable's value before sending the query to query processor.
 
+--------------------------------------------------------------------------------------
 -- Variables are displayed & changed using SET command.
 	  Set -v; --prints all variables in the namespace
 
@@ -17,9 +18,100 @@
 -- Displaying variables in hive
 	  Set <variable_name>;
 
+--------------------------------------------------------------------------------------
 -- Accessing variable values stored
 	  If variable is set using --set hivevar:<variable_name>=<variable_value>; 
 		then select ${<variable_name>};
 		
 	  If variable is set using --set <variable_name> = <variable_value>; 
 		then select ${hiveconf:<variable_name>};
+
+--------------------------------------------------------------------------------------
+-- hiveconf property that turns on printing of the current working database name in CLI prompt
+set hive.cli.print.current.db = true;
+
+--------------------------------------------------------------------------------------
+-- to run a hive command outside hive in shell 
+hive -e "select * from <table_name> where <condition>;
+--or 
+hive -S -e "select * from <table_name> where <condition>; --running query in silent mode
+
+--------------------------------------------------------------------------------------
+-- Executing Hive queries from a file
+-- if running query outside hive
+$ hive -f <path to code file with .hql extension> 
+-- or 
+-- if running from hive you can use source command 
+hive > SOURCE <path to code file with .hql extension> ;
+
+--------------------------------------------------------------------------------------
+-- hiveconf property to tell the CLI to print column headers which is disabled by default
+hive > set hive.cli.print.header = true;
+
+--------------------------------------------------------------------------------------
+-- Hive Data Types
+-- tinyint  1 byte integer
+-- smallint 2 byte integer
+-- int 4 byte integer
+-- bigint 8 byte integer
+-- boolean true/false
+-- float single precision
+-- double double precision
+-- string
+-- timestamp- values could be integers which represented as number of integers since the Unix epoch time, i.e., 1 Jan 1970, while float represents nanoseconds and string are interpreted as YYYY-MM-DD hh:mm:ss.fffffffff Timestamp else are interpreted in UTC 
+-- binary array of bytes
+
+--------------------------------------------------------------------------------------
+-- Casting in hive
+-- when comparing two integers of different ti=ype hive implicitly cast the smaller interger type to larger integer type as needed
+-- However incase of comparing of integer to string, user needed to expicitly cast one of the data type based on requirement
+>> cast(s as int) -- int is data type you want to change into
+
+--------------------------------------------------------------------------------------
+-- Hive Collection Datatypes: Embedding collection in records makes retrieval faster 
+-- struct 
+-- creating a struct syntax 
+create table struct_t (geo_loc struct <city:string, state:string, county:string, zip:int>);
+
+insert into struct_t
+select named_struct('city','Delhi','State','Delhi', 'county', 'India', 'zip', 110018) ;
+
+select geo_loc.county from struct_t; -- field of a struct can be references using "dot" notation
+
+--------------------------------------------------------------------------------------
+-- Map is a collection of key value tuples, where fields are accessed using array notation
+create table map_t (name map <string, string>);
+-- create table map_t (name map <<key data type>, <value data type>>);
+
+insert into map_t
+select map('first','Ritika') ;
+
+select name['first'] from map_t;
+
+--------------------------------------------------------------------------------------
+-- Array ordered sequence of same data type that are indexable 
+create table array_t (geo_loc array <string>);
+
+insert into array_t
+select array('Delhi','Delhi', 'India') ;
+
+select geo_loc[2] from array_t;
+-- in hive indexing starts from zero
+
+--------------------------------------------------------------------------------------
+-- Comparing in what cases to use which collection data type
+-- Say if I am store data for different mobile phones on same features then I would be creating a STRUCT data type
+-- Example 
+-- Mobile_Brand, Camera, Cost
+
+-- If I want to store the population of females for different years I would be creating a MAP
+-- Example
+-- Female[2015:646764, 2016:34646......]
+
+-- If I want to store a string of data of similar data type 
+-- example temperature of all zones of delhi on a particular day
+
+-- Reference: https://acadgild.com/blog/hive-complex-data-types-with-examples
+
+
+
