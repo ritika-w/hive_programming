@@ -113,5 +113,57 @@ select geo_loc[2] from array_t;
 
 -- Reference: https://acadgild.com/blog/hive-complex-data-types-with-examples
 
+--------------------------------------------------------------------------------------
+-- Databases in Hive
+-- Just a catalogue or namespace of tables
+-- unless specified default is the database
+
+-- Creating a database
+hive> create database <database_name>;
+-- or 
+hive> create database if not exists <database_name> ;
+
+-- list down names of databases
+hive > show databases;
+
+-- list databses based on a pattern
+> show databases like 'r.*.a'; -- list all databases that starts with r and end with a 
+
+-- hive creates a directory for each database and tables in that databse will be stored in subdirectories of the database directory
+-- except for defualt which doesn't have its own directory
+
+-- you can add a descriptive comment to the database while creating a database 
+> create database <db name>
+> comment "this is test db";
+
+-- you can use describe statement to get information about the database like directory location, user information
+> describe database <db_name>;
+
+-- you can also add additional information about the database with dbpropoerties 
+> create database <db_name>
+> with dbproperties ('creator' = 'abc', 'date' = '2020-01-01', 'location' = 'cloud');
+
+-- to view additional database information following describe commends help
+> describe database extended <db name>;
+
+-- use command sets a databse as your working database which is analogous to chaning working directories
+> use <db name>;
+-- once using a db show tables; would list all tables with that working database
+
+-- dropping a database 
+> drop database <db name>;
+-- or 
+> drop database if exists <db name>;
+-- if a database has tables hive won't let you drop the tables- so either you need to drop tables first or use keyword "cascade"
+> drop database if exists <db name> cascade;
+-- when a database is deleted so does its directory
+
+-- Alter databases
+You can add database properties however you cant chnage any information about the database
+> alter database <db name>
+> set dbproperties ('edited by' = 'xyz');
+
+--------------------------------------------------------------------------------------
+-- Tables in Hive
 
 
