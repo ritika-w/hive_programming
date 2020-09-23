@@ -165,5 +165,82 @@ You can add database properties however you cant chnage any information about th
 
 --------------------------------------------------------------------------------------
 -- Tables in Hive
+-- Creating table in hive
+-- data link https://data.world/data-society/bank-marketing-data
+	create table if not exists test.bank
+	(age INT comment 'description of each field can be added through this',
+	job string,
+	marital string,
+	education string,
+	default string,
+	housing string,
+	loan string,
+	contact string,
+	month string,
+	day_of_week string,
+	duration int,
+	campaign int,
+	pdays int,
+	previous int,
+	poutcome string,
+	emp_var_rate float,
+	cons_price_index float,
+	cons_conf_index float,
+	euribor3m float,
+	nr_employed int,
+	target string )
+	comment 'describes the information about the table'
+	tblproperties ('creator' = 'abc', ...)
+	ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+	LOCATION '/home/ritika_watsya/bank-additional-full.csv'; -- location where table is to be stored
+	
+-- how to copy schema of one table to create another table
+	create table if not exists test.bank_ext
+	like test.bank;
 
+-- display list of all tables
+	show tables;
+-- or	
+	show tables in <db name>;
 
+-- show tables using like 
+	show tables in test like 'b.*';
+	-- or 
+	show tables like 'b.*';
+
+-- describe statement
+	describe <db>.<tbl name>;
+	-- or 
+	describe extended <db>.<tbl name>;
+	-- or 
+	describe formatted <db>.<tbl name>; -- more readable format
+	-- or specific column information can be accessed as 
+	describe <db>.<tbl name>.<column_name>;
+	
+-- external data table in hive 
+	create external table if not exists test.bank_ext
+	(age INT,
+	job string,
+	marital string,
+	education string,
+	default string,
+	housing string,
+	loan string,
+	contact string,
+	month string,
+	day_of_week string,
+	duration int,
+	campaign int,
+	pdays int,
+	previous int,
+	poutcome string,
+	emp_var_rate float,
+	cons_price_index float,
+	cons_conf_index float,
+	euribor3m float,
+	nr_employed int,
+	target string )
+	ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+	LOCATION '/home/ritika_watsya/bank-additional-full.csv';
+ 
+	
